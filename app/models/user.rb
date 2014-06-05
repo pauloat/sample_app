@@ -1,5 +1,7 @@
 class User < ActiveRecord::Base
   has_secure_password
+  has_many :microposts, dependent: :destroy
+  
   before_save { email.downcase! }
   before_create :create_remember_token
 
@@ -17,6 +19,11 @@ class User < ActiveRecord::Base
     Digest::SHA1.hexdigest(token.to_s)
   end
 
+  def feed
+    # This is preliminary. see "Followig users" for the full implementation.
+    Micropost.where("user_id = ?", id)
+  end
+  
   private
 
     def create_remember_token
